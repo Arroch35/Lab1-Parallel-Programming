@@ -47,11 +47,11 @@ void feed_input(int i) {
  *
  */
 void forward_prop() {
-    for (int i = 1; i < num_layers; i++) {
-        for (int j = 0; j < num_neurons[i]; j++) {
-            lay[i].z[j] = lay[i].bias[j];
-            for (int k = 0; k < num_neurons[i - 1]; k++)
-                lay[i].z[j] +=
+    for (int i = 1; i < num_layers; i++) { // Ir capa a capa (empezando por la primera hidden layer)
+        for (int j = 0; j < num_neurons[i]; j++) { // Iteramos sobre todas las neuronas de la capa 
+            lay[i].z[j] = lay[i].bias[j]; // Inizializamos z[j] con el bias de la neurona
+            for (int k = 0; k < num_neurons[i - 1]; k++) // Suma ponderada de entradas y pesos. K recorre las neuronas de la capa anterior
+                lay[i].z[j] += //Multiplicamos cada neurona k de la capa anterior por el peso correspondiente y lo sumamos a z[j]
                     ((lay[i - 1].out_weights[j * num_neurons[i - 1] + k]) *
                      (lay[i - 1].actv[k]));
 
@@ -84,20 +84,20 @@ void forward_prop() {
  * (input layer) que és coneguda (imatge d'entrada).
  *
  */
-void back_prop(int p) {
+void back_prop(int p) { //Calcula el error de la red y propaga hacia atrás para ajustar el peso de las neuronas 
     // Output Layer
-    for (int j = 0; j < num_neurons[num_layers - 1]; j++) {
-        lay[num_layers - 1].dz[j] =
+    for (int j = 0; j < num_neurons[num_layers - 1]; j++) { //Calculo del error en la capa de salida. Recorre todas las neuronsas de la última capa
+        lay[num_layers - 1].dz[j] = //Calcula el error de cada neurona
             (lay[num_layers - 1].actv[j] - desired_outputs[p][j]) *
             (lay[num_layers - 1].actv[j]) * (1 - lay[num_layers - 1].actv[j]);
-        lay[num_layers - 1].dbias[j] = lay[num_layers - 1].dz[j];
+        lay[num_layers - 1].dbias[j] = lay[num_layers - 1].dz[j]; // Guardamos el error en el bias
     }
 
-    for (int j = 0; j < num_neurons[num_layers - 1]; j++) {
-        for (int k = 0; k < num_neurons[num_layers - 2]; k++) {
-            lay[num_layers - 2].dw[j * num_neurons[num_layers - 2] + k] =
+    for (int j = 0; j < num_neurons[num_layers - 1]; j++) { //Ajuste de los pesos entre la última y penúltima capa. Esta es la última
+        for (int k = 0; k < num_neurons[num_layers - 2]; k++) { // Esta es la penúltima
+            lay[num_layers - 2].dw[j * num_neurons[num_layers - 2] + k] = // Cálculo para cambiar los pesos
                 (lay[num_layers - 1].dz[j] * lay[num_layers - 2].actv[k]);
-            lay[num_layers - 2].dactv[k] =
+            lay[num_layers - 2].dactv[k] = // Propaga el error de la última capa a la penúltima (PROPAGA EL ERROR HACIA ATRAS)
                 lay[num_layers - 2]
                     .out_weights[j * num_neurons[num_layers - 2] + k] *
                 lay[num_layers - 1].dz[j];
@@ -105,11 +105,11 @@ void back_prop(int p) {
     }
 
     // Hidden Layers
-    for (int i = num_layers - 2; i > 0; i--) {
+    for (int i = num_layers - 2; i > 0; i--) { //Ajuste de los pesos en las capas ocúltas
         for (int j = 0; j < num_neurons[i]; j++) {
-            lay[i].dz[j] = (lay[i].z[j] >= 0) ? lay[i].dactv[j] : 0;
+            lay[i].dz[j] = (lay[i].z[j] >= 0) ? lay[i].dactv[j] : 0; //Aplica la derivada de relu a cada neurona
 
-            for (int k = 0; k < num_neurons[i - 1]; k++) {
+            for (int k = 0; k < num_neurons[i - 1]; k++) { // Capa anterior (i-1)
                 lay[i - 1].dw[j * num_neurons[i - 1] + k] =
                     lay[i].dz[j] * lay[i - 1].actv[k];
 
@@ -118,7 +118,7 @@ void back_prop(int p) {
                         lay[i - 1].out_weights[j * num_neurons[i - 1] + k] *
                         lay[i].dz[j];
             }
-            lay[i].dbias[j] = lay[i].dz[j];
+            lay[i].dbias[j] = lay[i].dz[j]; //bias de la capa i
         }
     }
 }
@@ -131,12 +131,13 @@ void back_prop(int p) {
  * @see back_prop
  */
 void update_weights(void) {
-    for (int i = 0; i < num_layers - 1; i++) {
-        for (int j = 0; j < num_neurons[i + 1]; j++)
-            for (int k = 0; k < num_neurons[i]; k++)  // Update Weights
-                lay[i].out_weights[j * num_neurons[i] + k] =
-                    (lay[i].out_weights[j * num_neurons[i] + k]) -
-                    (alpha * lay[i].dw[j * num_neurons[i] + k]);
+    for (int i = 0; i < num_layers - 1; i++) { //cada capa
+        for (int j = 0; j < num_neurons[i + 1]; j++) //cada neurona de la capa siguiente (i+1)
+            for (int k = 0; k < num_neurons[i]; k++)  // Update Weights. K es cada neurona de la capa i
+                lay[i].out_weights[j * num_neurons[i] + k] = // Modificamos cada peso de la red utilizando la ecuación del descenso por gradiente
+                    (lay[i].out_weights[j * num_neurons[i] + k]) - //ay[i].out_weights[j * num_neurons[i] + k] Esto es el peso antarior, al que le restaremos el gradiente * alpha
+                    (alpha * lay[i].dw[j * num_neurons[i] + k]); //lay[i].dw[j * num_neurons[i] + k] Esto es el gradiente claculado en back_prop(), que indica caunto ajustar el peso
+                                                                 //alpha Esto es la tasa de aprendizaje
 
         for (int j = 0; j < num_neurons[i]; j++)  // Update Bias
             lay[i].bias[j] = lay[i].bias[j] - (alpha * lay[i].dbias[j]);

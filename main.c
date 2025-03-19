@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-//-----------FREE INPUT------------
+//-----------FREE INPUT------------ 
 void freeInput(int np, char** input) {
     for (int i = 0; i < np; i++)
         free(input[i]);
@@ -75,10 +75,11 @@ void train_neural_net() {
 
     int ranpat[num_training_patterns];
 
-    // Gradient Descent
+    // POSIBLE PARALELIZACION
+    // Gradient Descent 
     for (int it = 0; it < num_epochs; it++) {
         // Train patterns randomly
-        for (int p = 0; p < num_training_patterns; p++)
+        for (int p = 0; p < num_training_patterns; p++) //
             ranpat[p] = p;
 
         for (int p = 0; p < num_training_patterns; p++) {
@@ -92,10 +93,10 @@ void train_neural_net() {
         for (int i = 0; i < num_training_patterns; i++) {
             int p = ranpat[i];
 
-            feed_input(p);
-            forward_prop();
-            back_prop(p);
-            update_weights();
+            feed_input(p); 
+            forward_prop(); //Esta se puede paralelizar
+            back_prop(p); // esta genera la dependencia. Esta hay que paralelizar
+            update_weights(); //Esta se puede paralelizar
         }
     }
     freeInput(num_training_patterns, input);

@@ -1,0 +1,4 @@
+Loading tau/2.32.1
+  Loading requirement: openmpi/4.1.1
+/soft/tau-2.32.1/x86_64/bin/tau_cc.sh: ERROR: please set the environment variable TAU_MAKEFILE
+tau_exec: ./my_program: command not found

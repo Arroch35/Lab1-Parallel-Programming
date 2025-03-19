@@ -1,0 +1,11 @@
+/soft/tau-2.32.1/x86_64/bin/tau_cc.sh: ERROR: please set the environment variable TAU_MAKEFILE
+
+Training...
+
+Testing...
+
+Total encerts = 885
+
+
+Goodbye! (9.903587 sec)
+

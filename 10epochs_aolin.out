@@ -1,0 +1,29 @@
+ERROR: Unable to locate a modulefile for 'gcc/12.1.1'
+
+Training...
+
+Testing...
+
+Total encerts = 885
+
+
+Goodbye! (2.260870 sec)
+
+
+ Performance counter stats for './exec':
+
+          2.241,52 msec task-clock:u              #    0,989 CPUs utilized          
+                 0      context-switches:u        #    0,000 /sec                   
+                 0      cpu-migrations:u          #    0,000 /sec                   
+             1.089      page-faults:u             #  485,832 /sec                   
+     9.758.425.507      cpu_core/cycles:u/        #    4,353 G/sec                  
+    47.313.072.201      cpu_core/instructions:u/  #   21,108 G/sec                  
+     6.267.614.320      cpu_core/branches:u/      #    2,796 G/sec                  
+         9.394.706      cpu_core/branch-misses:u/ #    4,191 M/sec                  
+
+       2,265639918 seconds time elapsed
+
+       2,237483000 seconds user
+       0,002997000 seconds sys
+
+

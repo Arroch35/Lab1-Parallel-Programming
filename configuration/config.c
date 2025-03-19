@@ -75,7 +75,7 @@ void readConfiguration(char* configfile) {
     num_neurons = malloc(num_layers * sizeof(int));
     checkError(num_neurons != NULL, "allocating neurons_by_layer\n", NULL);
 
-    for (int i = 0; i < num_layers; i++) {
+    for (int i = 0; i < num_layers; i++) {                            
         ok = fscanf(file, "layer=%d\n", &num_neurons[i]);
         checkError(ok != EOF, "reading num_layers", configfile);
     }
